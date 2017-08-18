@@ -4,90 +4,149 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-const int INPUT_MAX_SIZE = 1024;
-const int WORD_MAX_SIZE = 128;
-
-bool equalWords(char* str1, char* str2)
+bool isChar(char c)
 {
-	if (strlen(str1) != strlen(str2))
-		return false;
-
-	int i = 0;
-	while (str1[i])
-	{
-		if (str1[i] != str2[i])
-			return false;
-		++i;
-	}
-	return true;
-}
-
-bool isInSortedStr(char** str,int size, char* word)
-{
-	int element = 0;
-	while (element<size)
-	{
-		if (equalWords(str[element], word))
-			return true;
-		++element;
-	}
+	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+		return true;
 	return false;
 }
 
+//
+//if is capital letter return 2
+//if is lowercase letter return 1
+//if is not letter return 0
+short isLetter(char c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return 2;
+	if (c >= 'a' && c <= 'z')
+		return 1;
+	return 0;
+}
+
+const int INPUT_MAX_SIZE = 1024;
+
 int main()
 {
-	char* inputStr = new char[INPUT_MAX_SIZE + 1];
+	char* text = new char[INPUT_MAX_SIZE + 1];
+	cin.getline(text, INPUT_MAX_SIZE);
 
-	cin.getline(inputStr, INPUT_MAX_SIZE);
+	int length = strlen(text);
 
-	int i = 0, numOfWords = 1;
-	while (inputStr[i])
+	
+	short arr[INPUT_MAX_SIZE];
+	for (int i = 0; i < length; ++i)
+		arr[i] = 0;
+
+	//
+	// first for Capital letters
+	// for arr:
+	//	if some letter is unused is 2
+	//	if some letter is used   is 1
+	//	if is not letter for use is 0
+	//
+	if (isLetter(text[0]) == 2) //if is Capital letter
+		arr[0] = 2;
+
+	int i = 0;
+	while (text[i])
 	{
-		if (inputStr[i] == ' ')
-			++numOfWords;
+		if (text[i] == ' ')
+		{
+			++i;
+			if (isLetter(text[i]) == 2)
+				arr[i] = 2;
+		}
 		++i;
 	}
 
-	char** sortedStr = new char*[numOfWords + 1];
-	
-	for (int i = 0; i < numOfWords; ++i)
-		sortedStr[i] = new char[WORD_MAX_SIZE + 1];
-
-	bool isInStr = false;
 	i = 0;
-	int indexOfMin = 0, j = 0;
-	char* currentWord = new char[WORD_MAX_SIZE + 1];
-	int sortArrInd = 0;
-
-	for (int i = 0; i < 5; ++i)
+	char min = 'Z';
+	int j, k;
+	while (text[i])
 	{
-		while (inputStr[i])
+		if (arr[i] == 1 || arr[i] == 2) // if arr[i] is Capital letter and is first letter of the word
 		{
-			if (inputStr[i] == ' ')
+			j = 0;
+			while (j < length)
 			{
-				++i;
-				//problem 1
-				j = 0;
-				while (inputStr[i] != ' ' && inputStr[i] != '\0')
+				if (arr[j] == 2)
 				{
-					currentWord[j] = inputStr[i];
-					++j;
-					++i;
+					if (text[j] <= min)
+					{
+						min = text[j];
+						k = j;
+					}
 				}
-				currentWord[j] = '\0';
-
-				if (isInSortedStr(sortedStr,numOfWords, currentWord))
-					isInStr = true;
-
-				//problem 2
-				if (inputStr[indexOfMin] > inputStr[i] && !isInStr)
-					indexOfMin = i;
+				++j;
 			}
-			++i;
+			arr[k] = 1; // mark this letter for used
+			while (isChar(text[k]))
+			{
+				cout << text[k];
+				++k;
+			}
+			cout << " ";
+			min = 'Z';
 		}
-		
-
+		++i;
 	}
+
+	//
+	// now for lowercase
+	//
+
+	for (int i = 0; i < length; ++i)
+		arr[i] = 0;
+
+	if (isLetter(text[0]) == 1) // if the letter is lowercase
+		arr[0] = 2;
+
+	i = 0;
+	while (text[i])
+	{
+		if (text[i] == ' ')
+		{
+			++i;
+			if (isLetter(text[i]) == 1)
+				arr[i] = 2;
+		}
+		++i;
+	}
+
+	i = 0, min = 'z';
+	while (text[i])
+	{
+		if (arr[i] == 1 || arr[i] == 2) // if arr[i] is Capital letter and is first letter of the word
+		{
+			j = 0;
+			while (j < length)
+			{
+				if (arr[j] == 2)
+				{
+					if (text[j] <= min)
+					{
+						min = text[j];
+						k = j;
+					}
+				}
+				++j;
+			}
+			arr[k] = 1; // mark this letter for used
+			while (isChar(text[k]))
+			{
+				cout << text[k];
+				++k;
+			}
+			cout << " ";
+			min = 'z';
+		}
+		++i;
+	}
+
+	cout << endl;
+
+	delete[] text;
 
 	return 0;
 }
