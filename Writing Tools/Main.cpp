@@ -42,7 +42,7 @@ int main()
 
 	for (int i = 0; i < 5; ++i)
 	{
-		if (strcmp(generalBrand, pens[i].GetBrand()) == 0) //again check is the same brand
+		if (strcmp(generalBrand, pens[i].GetBrand()) == 0) //again check if is the same brand
 			ofs << pens[i] << endl; //calls Pencil::operator<< to output in the file
 	}
 
