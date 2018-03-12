@@ -30,7 +30,7 @@ int main()
 		cin >> num;
 		ofs.write((const char*)&num, sizeof(int));
 
-		if (!ofs.good())
+		if (!ofs.good()) //проверяваме дали информацията е записана успешно във файла
 		{
 			cout << "Error while writing in the file!\n";
 			break;
@@ -39,7 +39,7 @@ int main()
 
 	ofs.close();
 
-	std::ifstream ifs("numbers.bin", std::ios::binary);
+	std::ifstream ifs("numbers.bin", std::ios::binary); //отваряме същия файл, но този път да четем от него
 
 	if (!ifs.is_open())
 	{
@@ -50,7 +50,11 @@ int main()
 	int buffer;
 	while (!ifs.eof())
 	{
-		ifs.seekg(2 * sizeof(int), std::ios::cur);
+		//
+		//преместваме get pointer-а с 2 числа от тип int,
+		//за да може да стои точно "пред" 3-тото число,което трябва да прочетем
+		//
+		ifs.seekg(2 * sizeof(int), std::ios::cur); 
 
 		ifs.read((char*)&buffer, sizeof(int));
 
