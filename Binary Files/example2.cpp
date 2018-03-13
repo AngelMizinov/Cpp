@@ -66,7 +66,7 @@ int main()
 	/*
 
 	std::ifstream ifs("data.bin", std::ios::binary | std::ios::app);
-	std::ofstream ofs_txt("textFile.txt");
+	std::ofstream ofs_txt("example2_textFile.txt");
 
 	if (!ifs.is_open() || !ofs_txt.is_open())
 	{
