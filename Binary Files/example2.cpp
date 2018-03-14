@@ -5,105 +5,137 @@ using std::cin;
 using std::cout;
 using std::endl;
 
+const int MAX_INPUT_SIZE = 1024;
+
 struct Student
 {
 	char* name;
 	unsigned int fn;
 };
 
-
-int main()
+int ReadFromFile(const char* file_name)
 {
-	std::ofstream ofs("data.bin", std::ios::binary | std::ios::app);
+	std::ifstream ifs(file_name, std::ios::binary);
 
+	if (!ifs.is_open())
+	{
+		cout << "ERROR!Cannot open the file!\n";
+		return 1;
+	}
+
+	Student buffer;
+	int length;
+	while (!ifs.eof())
+	{
+		ifs.read((char*)&length, sizeof(int));
+		
+		if (ifs.eof())
+			break;
+
+		if (!ifs.good())
+		{
+			cout << "Error while reading the file!\n";
+			return 1;
+		}
+
+		buffer.name = new char[length + 1];
+		ifs.read(buffer.name, length);
+
+		buffer.name[length] = '\0';
+
+		if (!ifs.good())
+		{
+			cout << "Error while reading the file!\n";
+			return 1;
+		}
+
+		ifs.read((char*)&buffer.fn, sizeof(unsigned int));
+
+		if (!ifs.good())
+		{
+			cout << "Error while reading the file!\n";
+			return 1;
+		}
+
+		cout << buffer.name << " " << buffer.fn << endl;
+
+		delete[] buffer.name;
+	}
+
+	ifs.close();
+	return 0;
+}
+
+int WriteInFile(const char* file_name)
+{
+	int N;
+	cout << "Enter number of the students:\n";
+	cin >> N;
+	cin.ignore();
+
+	std::ofstream ofs(file_name, std::ios::binary | std::ios::app);
+	
 	if (!ofs.is_open())
 	{
 		cout << "ERROR!Cannot open the file!\n";
 		return 1;
 	}
 
-	int N;
-	cin >> N;
-	cin.ignore();
+	Student *students = new Student[N];
+	int* lengths = new int[N];
 
-	Student* students = new Student[N];
-
-	char* buffer = new char[1024];
-	int length;
-
+	char* buffer = new char[MAX_INPUT_SIZE];
+	
 	for (int i = 0; i < N; ++i)
 	{
 		cout << "Enter student name:\n";
-		cin.getline(buffer, 1023);
-
-		length = strlen(buffer) + 1;
-		students[i].name = new char[length];
-		strcpy_s(students[i].name, length, buffer);
+		cin.getline(buffer, MAX_INPUT_SIZE - 1);
+		
+		lengths[i] = strlen(buffer);
+		students[i].name = new char[lengths[i] + 1];
+		strcpy_s(students[i].name, lengths[i] + 1, buffer);
 
 		cout << "Enter student fn:\n";
 		cin >> students[i].fn;
 		cin.ignore();
 
+		memset(buffer, 0, MAX_INPUT_SIZE - 1);
+
 	}
 
 	for (int i = 0; i < N; ++i)
 	{
-		length = strlen(students[i].name);
+		ofs.write((const char*)&lengths[i], sizeof(int));
 
-		ofs.write((const char*)&students[i], sizeof(Student));
+		ofs.write(students[i].name, lengths[i]);
+		
+		ofs.write((const char*)&students[i].fn, sizeof(unsigned int));
 
 		if (!ofs.good())
 		{
 			cout << "Error while writing in the file!\n";
-			break;
+			return 1;
 		}
-	}
-
-	ofs.close();
-	delete[] buffer;
-
-	//--------------------------------------------------------------------------------
-	/*
-
-	std::ifstream ifs("data.bin", std::ios::binary | std::ios::app);
-	std::ofstream ofs_txt("textFile.txt");
-
-	if (!ifs.is_open() || !ofs_txt.is_open())
-	{
-	cout << "ERROR!Cannot open the file!\n";
-	return 1;
-	}
-
-	Student buff;
-	buff.name = new char[64];
-
-	while (!ifs.eof())
-	{
-	ifs.read((char*)&buff, sizeof(Student));
-
-	if (ifs.eof())
-	break;
-
-	if (!ifs.good())
-	{
-	cout << "Error while reading the file!\n";
-	return 1;
-	}
-
-	ofs_txt << buff.name << " fn: " << buff.fn << endl;
 
 	}
-
-	ifs.close();
-	ofs_txt.close();
-
-	*/
-	//---------------------------------------------------------------------------------
-
+	
 	for (int i = 0; i < N; ++i)
 		delete[] students[i].name;
-
+	
 	delete[] students;
+	
+	delete[] lengths;
+	
+	delete[] buffer;
 
+	ofs.close();
+	return 0;
+}
+
+int main()
+{
+	//WriteInFile("data.bin");
+	ReadFromFile("data.bin");
+	
 	return 0;
 }
