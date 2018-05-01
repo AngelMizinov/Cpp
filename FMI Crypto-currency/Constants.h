@@ -1,0 +1,37 @@
+#ifndef __CONSTANTS__HEADER__INCLUDED__
+#define __CONSTANTS__HEADER__INCLUDED__
+
+
+#define WALLETS_FILE "wallets.dat"
+#define TRANSACTIONS_FILE "transactions.dat"
+#define	ORDERS_FILE "orders.dat"
+#define IDS_FILE "ids.dat"
+
+const int FMICoin = 375;
+const unsigned int SYSTEM_WALLET_ID = 4294967295;
+
+const int MAX_INPUT_SIZE = 32;
+const int MAX_NAME_SIZE = 256;
+const int MAX_TYPE_ORDER_SIZE = 4;
+const int MAX_FILE_NAME_SIZE = 32;
+
+enum PROGRAM_PROCESS
+{
+	SUCCESS,
+	ERROR_OPENING_FILE,
+	ERROR_WRITING_FILE,
+	ERROR_READING_FILE,
+	ERROR_MEMORY_ALLOCATION,
+	ERROR_INVALID_INFORMATION
+};
+
+enum Type
+{
+	INVALID_TYPE_ORDER = -1,
+	
+	SELL,
+	BUY
+};
+
+
+#endif // !__CONSTANTS__HEADER__INCLUDED__
