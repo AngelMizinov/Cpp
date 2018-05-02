@@ -75,6 +75,8 @@ int main()
 	cout << "cin>> " << endl;
 	cin >> e;
 	cout << e << endl;
-
+	
+	delete[] text;
+	
 	return 0;
 }
